@@ -144,11 +144,3 @@ def map_keywords_and_timestamps(keywords_file_path, timestamps_file_path, output
     
     return combined_data
 
-# Example usage
-if __name__ == "__main__":
-    keywords_file = "output/keywords.json"
-    timestamps_file = "output/transcript.json"
-    output_file = "mapped1.json"
-    
-    result = map_keywords_and_timestamps(keywords_file, timestamps_file, output_file)
-    print(f"Processing complete. Output saved to {output_file}")

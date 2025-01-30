@@ -48,10 +48,3 @@ def generate_audio(script):
         print (f"Error: {e}")
         return None 
 
-
-if __name__ == "__main__":
-
-    script_file_path = "output/script.txt"
-
-    script_content = read_script(script_file_path)
-    generate_audio(script_content)

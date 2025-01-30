@@ -66,9 +66,3 @@ def transcript_to_sentences(file_path):
     
     return output_path
 
-if __name__ == "__main__":
-    # Path to the input JSON file
-    file_path = "output/transcript.json"
-    
-    # Generate sentence-level transcripts with primary IDs
-    transcript_to_sentences(file_path)

@@ -60,7 +60,3 @@ def generate_transcript(audio_file_path):
 
     except Exception as e:
         raise Exception(f"Error in transcription: {e}")
-    
-if __name__ == "__main__":
-    audio_file_path = "output/audio.mp3"
-    generate_transcript(audio_file_path)    

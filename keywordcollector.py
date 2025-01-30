@@ -166,8 +166,3 @@ def process_json_file(json_file_path):
         json.dump(results, output_file, indent=4)
 
     print("Keywords saved to keywords.json")
-
-if __name__ == "__main__":
-    # Example usage
-    json_file_path = "output/sentence_transcript_with_ids.json"  # Replace with your JSON file path
-    process_json_file(json_file_path)

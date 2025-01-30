@@ -53,10 +53,3 @@ The output should be in text format, structured like this:
     except Exception as e:
         return f"Error: {e}"
 
-if __name__ == "__main__":
-    # Read the prompt from the summary.txt file
-    with open("output/summary.txt", "r") as file:
-        prompt = file.read()
-    
-    # Generate the script using the prompt
-    generate_script(prompt)
