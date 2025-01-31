@@ -7,17 +7,16 @@ from moviepy.editor import ImageSequenceClip
 # Initialize Pygame
 pygame.init()
 
-# Vibrant solid color palette
 # Vibrant solid color palette (used if no custom color is provided)
 COLORS = [
-    (255, 255, 255),    # White
-    (82, 183, 255),     # Bright blue
-    (255, 94, 94),      # Bright Red
-    (94, 255, 114),     # Bright Green
-    (255, 187, 85),     # Bright Orange
-    (190, 94, 255),     # Bright Purple
-    (255, 94, 219),     # Bright Pink
-    (94, 255, 247),     # Bright Cyan
+    (255, 255, 255),  # White (corrected from black)
+    (82, 183, 255),   # Bright blue
+    (255, 94, 94),    # Bright Red
+    (94, 255, 114),   # Bright Green
+    (255, 187, 85),   # Bright Orange
+    (190, 94, 255),   # Bright Purple
+    (255, 94, 219),   # Bright Pink
+    (94, 255, 247),   # Bright Cyan
 ]
 
 class TextEffect:
@@ -82,15 +81,13 @@ class TextEffect:
 
             # If adding the word exceeds the max width, start a new line
             if current_line_width + word_width > max_width:
-                lines.append(" ".join(current_line))  # Add current line to lines
-                current_line = [word]  # Start new line with the current word
+                lines.append(" ".join(current_line))
+                current_line = [word]
                 current_line_width = word_width
             else:
-                # Add the word to the current line
                 current_line.append(word)
-                current_line_width += word_width + font.size(" ")[0]  # Add space width
+                current_line_width += word_width + font.size(" ")[0]
 
-        # Add the last line
         if current_line:
             lines.append(" ".join(current_line))
 
@@ -101,89 +98,78 @@ class TextEffect:
         surface = pygame.Surface(self.resolution)
         surface.fill(self.bg_color)
 
-        # Calculate dynamic font size with zoom effect (if applicable)
         font_size = self.apply_zoom_effect(t)
         font = pygame.font.Font(None, font_size)
 
         if self.apply_zoom:
-            # For short words: render the full word with zoom effect
             text_surface = font.render(self.word, True, self.color)
-            
-            # Calculate centered position
             text_x = (self.resolution[0] - text_surface.get_width()) // 2
             text_y = (self.resolution[1] - text_surface.get_height()) // 2
-            
             surface.blit(text_surface, (text_x, text_y))
         else:
-            # For longer text: split into lines and render
-            lines = self.wrap_text(revealed_text, font, self.resolution[0] * 0.9)  # 90% of screen width
+            lines = self.wrap_text(revealed_text, font, self.resolution[0] * 0.9)
             total_height = len(lines) * font_size
-            y_offset = (self.resolution[1] - total_height) // 2  # Center vertically
+            y_offset = (self.resolution[1] - total_height) // 2
 
             for line in lines:
-                # Calculate total width of the line (including spaces)
                 total_width = 0
                 char_surfaces = []
-                space_width = font.size(" ")[0]  # Get the width of a space character
+                space_width = font.size(" ")[0]
 
                 for char in line:
-                    if char.strip():  # If it's not a space
+                    if char.strip():
                         char_surface = font.render(char, True, self.color)
-                        char_surfaces.append((char_surface, False))  # False = not a space
+                        char_surfaces.append((char_surface, False))
                         total_width += char_surface.get_width()
-                    else:  # If it's a space
-                        char_surfaces.append((None, True))  # True = space
+                    else:
+                        char_surfaces.append((None, True))
                         total_width += space_width
                 
-                # Calculate starting x position for centering
                 x_offset = (self.resolution[0] - total_width) // 2
 
-                # Render each character or space
                 for char_surface, is_space in char_surfaces:
                     if is_space:
-                        # Add space width
                         x_offset += space_width
                     else:
-                        # Render character
                         surface.blit(char_surface, (x_offset, y_offset))
                         x_offset += char_surface.get_width()
                 
-                # Move to the next line
                 y_offset += font_size
             
         return surface
 
-def create_text_video(word, temp_folder="temp_frames",output_path="output/video/text.mp4",
-                     resolution=(1920, 1080), font_color=None, bg_color=(0, 0, 0),
-                     duration=5,reveal_time=1):
+def create_text_video(word, video_format="long", temp_folder="temp_frames", output_path="output/video/text.mp4",
+                     font_color=None, bg_color=(255, 255, 255),
+                     duration=5, reveal_time=1):
     
-    # Create all necessary directories in the path
+    if video_format == "short":
+        resolution=(1080, 1920)
+    elif video_format == "long":
+        resolution=(1920, 1080)
+    else:
+        raise ValueError("Invalid video format. Use 'long' or 'short'.")
+
     output_dir = os.path.dirname(output_path)
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(temp_folder, exist_ok=True)
 
-    # Make sure the output file doesn't exist or isn't in use
     if os.path.exists(output_path):
         try:
             os.remove(output_path)
         except PermissionError:
             raise PermissionError(f"Cannot write to {output_path}. File may be in use by another process.")
-            
 
     fps = 24
     effect = TextEffect(word, resolution, font_color, bg_color)
 
     frames = []
     total_frames = int(fps * duration)
-    
-    # Calculate reveal duration (only for longer words)
     reveal_frames = int(fps * reveal_time) if len(word) >= 5 else 0
     letters_per_frame = len(word) / reveal_frames if reveal_frames > 0 else 0
 
     for i in range(total_frames):
         t = i / fps
         
-        # Calculate revealed text (only for longer words)
         if len(word) >= 5:
             if i < reveal_frames:
                 revealed_count = min(len(word), int(i * letters_per_frame))
@@ -191,35 +177,31 @@ def create_text_video(word, temp_folder="temp_frames",output_path="output/video/
                 revealed_count = len(word)
             revealed_text = word[:revealed_count]
         else:
-            # For short words, always show the full word
             revealed_text = word
         
-        # Render frame
         surface = effect.render_frame(revealed_text, t)
         frame_path = os.path.join(temp_folder, f"frame_{i:04d}.png")
         pygame.image.save(surface, frame_path)
         frames.append(frame_path)
 
-    # Create video
     clip = ImageSequenceClip(frames, fps=fps)
     clip.write_videofile(output_path, codec="libx264", fps=fps)
 
-    # Cleanup
     for frame in frames:
         os.remove(frame)
     shutil.rmtree(temp_folder)
 
     return output_path
 
-def create_video_for_single_keyword(word, output_path,
-                                   resolution=(1920, 1080), font_color=None,
-                                   bg_color=(0, 0, 0), duration=5, reveal_time=1):
+def create_video_for_single_keyword(video_format, word, output_path,
+                                   font_color=None,
+                                   bg_color=(255, 255, 255), duration=5, reveal_time=1):
     try:
         video_path = create_text_video(
             word,
             temp_folder="temp_frames",
             output_path=output_path,
-            resolution=resolution,
+            video_format=video_format,
             font_color=font_color,
             bg_color=bg_color,
             duration=duration,
@@ -234,3 +216,14 @@ def create_video_for_single_keyword(word, output_path,
         print("- The output file is not in use")
         print("- You have sufficient permissions")
         raise
+
+if __name__ == "__main__":
+    output_path = "output/test/hello_world.mp4"
+    create_video_for_single_keyword(
+        # video_format="long",
+        word="Hello World this is a big news diddy found combing outside of the cell",
+        output_path=output_path,
+        font_color=(0, 0, 0),
+        bg_color=(255, 255, 255)
+    )
+    print(f"Video created at: {output_path}")

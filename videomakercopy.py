@@ -3,7 +3,7 @@ from moviepy.editor import ImageClip, VideoFileClip, concatenate_videoclips, Aud
 from moviepy.video.fx.all import freeze
 
 # Define the resolution for the final video
-VIDEO_RESOLUTION = (1920, 1080)
+VIDEO_RESOLUTION = (1080, 1920)
 
 def create_clip(keyword_data):
     try:

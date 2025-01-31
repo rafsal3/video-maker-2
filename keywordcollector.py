@@ -43,23 +43,25 @@ def get_keywords_from_gemini(text):
     try:
         # System instruction for Gemini AI
         instruction = """
-        You are tasked with processing a sentence and extracting relevant keywords for video content. Each keyword should be assigned an order ID based on its position in the sentence, and you must determine whether it should be represented as text, image, or gif in the video.
+    You are tasked with processing a sentence and extracting relevant keywords for video content. Each keyword should be assigned an order ID based on its position in the sentence, and you must determine whether it should be represented as text, image, or gif in the video.
 
-        Rules:
-        1. Extract meaningful and relevant keywords from the sentence **in the order they appear**.
-        2. Assign 'image' for specific objects, products, or visual concepts.
-        3. Assign 'gif' for humorous, dynamic, or action-oriented terms.
-        4. Assign 'text' for generic phrases, numbers, or descriptive terms.
-        5. Assign an 'order_id' to each keyword, starting from 1, based on its position in the sentence.
-        6. Ensure each keyword appears only once with a single type.
+    Rules:
+    1. Extract meaningful and relevant keywords from the sentence **in the order they appear**.
+    2. Assign 'image' for specific objects, products, visual concepts, or abstract ideas (e.g., "success" ➔ trophy image, "team" ➔ group illustration).
+    3. Assign 'gif' for humorous, dynamic, action-oriented, or metaphorical terms (e.g., "growth" ➔ expanding graph gif, "celebration" ➔ confetti gif).
+    4. Assign 'text' for generic phrases, numbers, dates, or purely informational terms (e.g., "2023," "research shows").
+    5. Assign an 'order_id' to each keyword, starting from 1, based on its position in the sentence.
+    6. Ensure each keyword appears only once with a single type.
+    7. Prioritize assigning "image" or "gif" over "text" where possible to ensure a balanced distribution of types.
+    8. Avoid assigning the same type to more than two consecutive keywords. If necessary, re-evaluate the type assignment to ensure diversity.
 
-        Output Format:
-        [
-            {"order_id": 1, "type": "image", "keyword": "example keyword"},
-            {"order_id": 2, "type": "gif", "keyword": "example keyword"},
-            {"order_id": 3, "type": "text", "keyword": "example keyword"}
-        ]
-        """
+    Output Format:
+    [
+        {"order_id": 1, "type": "image", "keyword": "example keyword"},
+        {"order_id": 2, "type": "gif", "keyword": "example keyword"},
+        {"order_id": 3, "type": "text", "keyword": "example keyword"}
+    ]
+    """
 
         # Combine instruction and input text
         prompt = instruction + "\n\nInput Sentence:\n" + text

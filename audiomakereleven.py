@@ -21,7 +21,7 @@ def generate_audio(script):
     print("Generating Audio...")
 
     # Voice ID and model ID for ElevenLabs
-    voice_id = "JBFqnCBsd6RMkjVDRZzb"  # Replace with your desired voice ID
+    voice_id = "qwaVDEGNsBllYcZO1ZOJ"  # Replace with your desired voice ID
     model_id = "eleven_multilingual_v2"  # Replace with your desired model ID
 
     # Output folder

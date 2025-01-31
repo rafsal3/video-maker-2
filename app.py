@@ -38,7 +38,7 @@ if __name__ == "__main__":
     
     # keyword to transcript maker mapping
     keywords_file = "output/keywords.json"
-    mapping_output_file = "mapped.json"
+    mapping_output_file = "output/mapped.json"
     
     result = map_keywords_and_timestamps(keywords_file, transcript_file_path, mapping_output_file)
     print(f"Processing complete. Output saved to {mapping_output_file}")
